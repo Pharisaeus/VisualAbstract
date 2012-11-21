@@ -25,9 +25,20 @@
 <script type="text/javascript">
     function init() {
         var sigInst = sigma.init(document.getElementById('sigma-example')).drawingProperties({
-            defaultLabelColor : '#fff'
-        });
-
+    defaultLabelColor: '#fff',
+    defaultLabelSize: 14,
+    defaultLabelBGColor: '#fff',
+    defaultLabelHoverColor: '#000',
+    labelThreshold: 6,
+    defaultEdgeType: 'curve'
+  }).graphProperties({
+    minNodeSize: 1,
+    maxNodeSize: 15,
+    minEdgeSize: 1,
+    maxEdgeSize: 1
+  }).mouseProperties({
+    maxRatio: 20
+  });
         var i = 0
         {% for color,nodes in colored_nodes.items %}
             color = 'rgb(' + Math.round(Math.random() * 256) + ',' + Math.round(Math.random() * 256) + ',' + Math.round(Math.random() * 256) + ')'
@@ -35,7 +46,7 @@
                 sigInst.addNode('{{ node.word }}', {
                 'x' : Math.random(),
                 'y' : Math.random(),
-                'size' : {{ node.get_size }} ,
+                'size' : 3*{{ node.get_size }} ,
                 'color' : color,
                 'cluster' : i
             });
@@ -54,6 +65,29 @@
          {% endfor %}
         
         sigInst.startForceAtlas2();
+
+      sigInst.bind('overnodes',function(event){
+        var nodes = event.content;
+        var neighbors = {};
+        sigInst.iterEdges(function(e){
+          if(nodes.indexOf(e.source)>=0 || nodes.indexOf(e.target)>=0){
+            neighbors[e.source] = 1;
+            neighbors[e.target] = 1;
+          }
+        }).iterNodes(function(n){
+          if(!neighbors[n.id]){
+            n.hidden = 1;
+          }else{
+            n.hidden = 0;
+          }
+        }).draw(2,2,2);
+      }).bind('outnodes',function(){
+        sigInst.iterEdges(function(e){
+          e.hidden = 0;
+        }).iterNodes(function(n){
+          n.hidden = 0;
+        }).draw(2,2,2);
+      });
 
         var isRunning = true;
         document.getElementById('stop-layout').addEventListener('click', function() {
