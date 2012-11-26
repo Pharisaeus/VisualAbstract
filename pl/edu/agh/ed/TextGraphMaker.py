@@ -19,7 +19,7 @@ class TextGraphMaker(object):
         graph = Graph()
         for i in range(len(words_list)):
             node = graph.get_node(words_list[i])
-            for next_node_word in words_list[i + 1:i + 3]: #2 nodes ahead
+            for next_node_word in words_list[i + 1:i + 4]: #2 nodes ahead
                 next_node = graph.get_node(next_node_word)
                 node.connect_to(next_node)
         self.color_graph(graph)
