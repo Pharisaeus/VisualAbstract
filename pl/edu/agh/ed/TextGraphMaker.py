@@ -8,7 +8,7 @@ from pl.edu.agh.ed.Graph import Graph
 class TextGraphMaker(object):
 
     __dictionary = Dictionary()
-    __topicModel = TopicModel(__dictionary, 100, "C:\Users\Pharisaeus\workspace\Python\DjangoTest\static\papsmall.txt")
+    __topicModel = TopicModel("dictionary", "lda")
 
     def __init__(self):
         self.dictionary = self.__dictionary
