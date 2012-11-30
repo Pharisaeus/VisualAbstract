@@ -57,7 +57,7 @@
             i=0
         {% for color,nodes in colored_nodes.items %}
             {% for node in nodes %}
-                {% for neighbour in node.neighbours %}
+                {% for neighbour,weight in node.neighbours %}
                     sigInst.addEdge(i, '{{node.word}}','{{neighbour.word}}');
                     i+=1
                 {% endfor %}

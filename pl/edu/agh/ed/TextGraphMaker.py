@@ -1,5 +1,5 @@
 import networkx as nx
-from pl.edu.agh.ed.community import best_partition
+from pl.edu.agh.ed.community import best_partition, generate_dendogram, partition_at_level
 from pl.edu.agh.ed.TopicModel import TopicModel
 from pl.edu.agh.ed.Dictionary import Dictionary
 from pl.edu.agh.ed.Graph import Graph
@@ -8,7 +8,7 @@ from pl.edu.agh.ed.Graph import Graph
 class TextGraphMaker(object):
 
     __dictionary = Dictionary()
-    __topicModel = TopicModel("dictionary", "lda")
+    __topicModel = TopicModel("e:\\dictionary", "e:\\lda", "e:\\tfidf")
 
     def __init__(self):
         self.dictionary = self.__dictionary
@@ -16,12 +16,17 @@ class TextGraphMaker(object):
 
     def create_text_graph(self, text):
         words_list = self.dictionary.normalize_document(text)
+        keywords = self.topicModel.return_top_words(words_list)
         graph = Graph()
         for i in range(len(words_list)):
-            node = graph.get_node(words_list[i])
-            for next_node_word in words_list[i + 1:i + 4]: #2 nodes ahead
-                next_node = graph.get_node(next_node_word)
-                node.connect_to(next_node)
+            if words_list[i] in keywords:
+                node = graph.get_node(words_list[i])
+                weight = 4
+                for next_node_word in words_list[i + 1:i + 4]: #2 nodes ahead
+                    if next_node_word in keywords:
+                        next_node = graph.get_node(next_node_word)
+                        node.connect_to(next_node, weight)
+                        weight -= 1
         self.color_graph(graph)
         return graph
 
@@ -30,11 +35,28 @@ class TextGraphMaker(object):
         for node in graph.get_nodes():
             G.add_node(node.get_word())
         for node in graph.get_nodes():
-            for neighbour_node in node.get_neighbours():
-                G.add_edge(node.get_word(), neighbour_node.get_word())
+            for neighbour_node, _weight in node.get_neighbours():
+                G.add_edge(node.get_word(), neighbour_node.get_word()) 
         groups = best_partition(G)
+        communities = self.merge_converging_communities(groups)
         for node in graph.get_nodes():
-            node.set_color(groups[node.get_word()])
+            node.set_color(communities[node.get_word()])
+
+    def merge_converging_communities(self, groups):
+        communities = {}
+        for color in groups.itervalues():
+            communities[color] = [word for word in groups.iterkeys() if groups[word] == color]
+        topic_communities = {}
+        for color in communities.iterkeys():
+            topic, _ = self.topicModel.get_best_matching_topic(communities[color])
+            if topic_communities.__contains__(topic) is False:
+                topic_communities[topic] = []
+            topic_communities[topic].extend(communities[color])
+        colored_communities = {}
+        for (topic, color) in zip(topic_communities.keys(), communities.keys()):
+            for word in topic_communities[topic]:
+                colored_communities[word] = color
+        return colored_communities
 
     def print_topics(self, graph):
         self.topicModel.print_topics(graph)

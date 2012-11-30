@@ -5,8 +5,8 @@ class Node(object):
         self.color = None
         self.incoming = []
 
-    def connect_to(self, node):
-        self.neighbours.append(node)
+    def connect_to(self, node, edge_weight):
+        self.neighbours.append((node, edge_weight))
         node.add_incoming(self)
 
     def add_incoming(self, node):

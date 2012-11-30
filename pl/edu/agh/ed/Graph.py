@@ -16,8 +16,8 @@ class Graph(object):
     def get_colored_nodes(self):
         nodes_colors = {}
         for node in self.get_nodes():
-            if nodes_colors.has_key(node.get_color()):
-                nodes_colors[node.get_color()].append(node)
-            else:
-                nodes_colors[node.get_color()] = [node]
+                if nodes_colors.has_key(node.get_color()):
+                    nodes_colors[node.get_color()].append(node)
+                else:
+                    nodes_colors[node.get_color()] = [node]
         return nodes_colors
