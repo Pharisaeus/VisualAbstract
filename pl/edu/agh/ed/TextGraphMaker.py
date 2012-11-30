@@ -14,9 +14,9 @@ class TextGraphMaker(object):
         self.dictionary = self.__dictionary
         self.topicModel = self.__topicModel
 
-    def create_text_graph(self, text):
+    def create_text_graph(self, text, percentage):
         words_list = self.dictionary.normalize_document(text)
-        keywords = self.topicModel.return_top_words(words_list)
+        keywords = self.topicModel.return_top_words(words_list, percentage)
         graph = Graph()
         for i in range(len(words_list)):
             if words_list[i] in keywords:

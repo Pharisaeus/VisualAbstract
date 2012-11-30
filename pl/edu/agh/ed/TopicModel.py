@@ -19,8 +19,9 @@ class TopicModel(object):
 
     def print_infered_topic(self, color, words):
         relevance = self.model[self.dictionary.doc2bow(words)]
+        sorted_relevance = sorted(relevance, key=lambda tup: tup[1], reverse=True)
         print "kolor %s" % color
-        for topic, value in relevance:
+        for topic, value in sorted_relevance:
             if value > 1e-1:
                 print topic, value, words, self.model.show_topic(topic, 10)
 
@@ -29,8 +30,8 @@ class TopicModel(object):
             text = [node.get_word() for node in nodes_list]
             self.print_infered_topic(color, text)
 
-    def return_top_words(self, word_list):
-        how_many = len(word_list) / 2 
+    def return_top_words(self, word_list, percentage):
+        how_many = len(word_list) * (percentage / 100.0)
         words_bow = self.dictionary.doc2bow(word_list)
         keywords = self.tfidf[words_bow]
         best_keywords = []

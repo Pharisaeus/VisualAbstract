@@ -10,8 +10,9 @@ def home(request):
     colored_nodes = None
     try:
         input_text = request.POST['text']
+        percentage = int(request.POST['percentage'])
         textGraphMaker = TextGraphMaker()
-        graph = textGraphMaker.create_text_graph(input_text)
+        graph = textGraphMaker.create_text_graph(input_text, percentage)
         colored_nodes = graph.get_colored_nodes()
         textGraphMaker.print_topics(graph)
     except MultiValueDictKeyError:
