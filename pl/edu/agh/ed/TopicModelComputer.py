@@ -1,16 +1,28 @@
+# -*- coding: utf-8 -*-
 import logging
-from gensim import corpora
-from gensim.models import ldamodel
+from gensim import corpora, models
 import codecs
 import re
+from gensim.models import ldamodel
 
 
 def read_stop():
-    with codecs.open("stop.txt", "r") as f:
-        return set([word.strip() for word in f.read().decode('utf-8').split(',')])
+    with codecs.open("stop.txt", "r", 'utf-8') as f:
+        return set([word.strip() for word in f.read().split(',')])
 
 
-def read_documents(stop_list):
+def read_dictionary():
+    dictionary = {}
+    with codecs.open("odmutf.txt", "r", 'utf-8') as f:
+        data = f.read()
+        for line in data.split('\n'):
+            words = line.split(',')
+            for word in words:
+                dictionary[word.strip()] = words[0].strip()
+    return dictionary
+
+
+def read_documents(dictionary, stop_list):
     documents = []
     with codecs.open("pap.txt", "r", 'utf-8') as f:
         data = f.read().lower()
@@ -18,20 +30,27 @@ def read_documents(stop_list):
             normalized_document = []
             for word in re.findall('\w+', document, re.UNICODE):
                 if word not in stop_list and word != '':
-                    normalized_document.append(word)
-            documents.append(" ".join(normalized_document))
+                    try:
+                        normalized_document.append(dictionary[word])
+                    except KeyError:
+                        normalized_document.append(word)
+                        dictionary[word] = word
+            documents.append(normalized_document)
     return documents
 
 
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-    stop_list = read_stop()
-    documents = read_documents(stop_list)[1:]
-    texts = [text.split() for text in documents]
-    dictionary = corpora.Dictionary.load("e:\\dictionary")
+    dictionary = corpora.Dictionary()
+    documents = read_documents(read_dictionary(), read_stop())[1:]
+    dictionary.add_documents(documents)
+    dictionary.save("dictionary")
+    tfidf = models.TfidfModel(dictionary=dictionary)
+    tfidf.save("tfidf")
+    texts = [document for document in documents]
     corpus = [dictionary.doc2bow(text) for text in texts]
     model = ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=100)
-    model.save("e:\\lda")
+    model.save("lda")
 
 if __name__ == '__main__':
     main()
