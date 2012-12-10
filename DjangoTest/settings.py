@@ -1,4 +1,7 @@
 # Django settings for DjangoTest project.
+import os
+
+ROOT_PATH = os.path.dirname(__file__)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -64,7 +67,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    'C:\\Users\\Pharisaeus\\workspace\\Python\\DjangoTest\\static',
+    os.path.join(ROOT_PATH, 'static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

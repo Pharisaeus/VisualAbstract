@@ -3,12 +3,14 @@ from pl.edu.agh.ed.community import best_partition, generate_dendogram, partitio
 from pl.edu.agh.ed.TopicModel import TopicModel
 from pl.edu.agh.ed.Dictionary import Dictionary
 from pl.edu.agh.ed.Graph import Graph
+import os
+from DjangoTest.settings import ROOT_PATH
 
 
 class TextGraphMaker(object):
 
     __dictionary = Dictionary()
-    __topicModel = TopicModel("e:\\dictionary", "e:\\lda", "e:\\tfidf")
+    __topicModel = TopicModel(os.path.join(ROOT_PATH, 'static/dictionary'), "e:\\lda", os.path.join(ROOT_PATH, 'static/tfidf'))
 
     def __init__(self):
         self.dictionary = self.__dictionary
@@ -27,6 +29,7 @@ class TextGraphMaker(object):
                         next_node = graph.get_node(next_node_word)
                         node.connect_to(next_node, weight)
                         weight -= 1
+        graph.remove_single_vertices()
         self.color_graph(graph)
         return graph
 
@@ -60,3 +63,6 @@ class TextGraphMaker(object):
 
     def print_topics(self, graph):
         self.topicModel.print_topics(graph)
+
+    def get_topics(self, graph):
+        return self.topicModel.get_topcis(graph, 40)

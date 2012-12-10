@@ -28,10 +28,10 @@ def main():
     stop_list = read_stop()
     documents = read_documents(stop_list)[1:]
     texts = [text.split() for text in documents]
-    dictionary = corpora.Dictionary(texts)
+    dictionary = corpora.Dictionary.load("e:\\dictionary")
     corpus = [dictionary.doc2bow(text) for text in texts]
     model = ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=100)
-    model.save("lda")
+    model.save("e:\\lda")
 
 if __name__ == '__main__':
     main()
