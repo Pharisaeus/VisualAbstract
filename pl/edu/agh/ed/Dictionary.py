@@ -1,22 +1,21 @@
 import codecs
 import re
 import os
-from DjangoTest.settings import ROOT_PATH
+from DjangoTest.settings import  RESOURCES_PATH
 
 
 class Dictionary(object):
-
     def __init__(self):
         self.stoplist = self.read_stop()
         self.dictionary = self.read_dictionary()
 
     def read_stop(self):
-        with codecs.open(os.path.join(ROOT_PATH, 'static/stop.txt'), "r") as f:
+        with codecs.open(os.path.join(RESOURCES_PATH, 'stop.txt'), "r") as f:
             return set([word.strip() for word in f.read().decode('utf-8').split(',')])
 
     def read_dictionary(self):
         dictionary = {}
-        with codecs.open(os.path.join(ROOT_PATH, 'static/odm.txt'), "r", "utf-8") as f:
+        with codecs.open(os.path.join(RESOURCES_PATH, 'odm.txt'), "r", "utf-8") as f:
             data = f.read()
             for line in data.split('\n'):
                 words = line.split(',')

@@ -6,6 +6,7 @@ from pl.edu.agh.ed.TextGraphMaker import TextGraphMaker
 
 
 def home(request):
+    colored_topic_keywords = []
     input_text = "Wpisz przykładowy tekst "
     colored_nodes = None
     try:

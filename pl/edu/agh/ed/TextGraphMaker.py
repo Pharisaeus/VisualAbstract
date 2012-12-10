@@ -1,16 +1,16 @@
 import networkx as nx
-from pl.edu.agh.ed.community import best_partition, generate_dendogram, partition_at_level
+from pl.edu.agh.ed.community import best_partition
 from pl.edu.agh.ed.TopicModel import TopicModel
 from pl.edu.agh.ed.Dictionary import Dictionary
 from pl.edu.agh.ed.Graph import Graph
 import os
-from DjangoTest.settings import ROOT_PATH
+from DjangoTest.settings import  RESOURCES_PATH
 
 
 class TextGraphMaker(object):
-
     __dictionary = Dictionary()
-    __topicModel = TopicModel(os.path.join(ROOT_PATH, 'static/dictionary'), "e:\\lda", os.path.join(ROOT_PATH, 'static/tfidf'))
+    __topicModel = TopicModel(os.path.join(RESOURCES_PATH, 'dictionary'), os.path.join(RESOURCES_PATH, 'lda'),
+        os.path.join(RESOURCES_PATH, 'tfidf'))
 
     def __init__(self):
         self.dictionary = self.__dictionary
@@ -39,7 +39,7 @@ class TextGraphMaker(object):
             G.add_node(node.get_word())
         for node in graph.get_nodes():
             for neighbour_node, _weight in node.get_neighbours():
-                G.add_edge(node.get_word(), neighbour_node.get_word()) 
+                G.add_edge(node.get_word(), neighbour_node.get_word())
         groups = best_partition(G)
         communities = self.merge_converging_communities(groups)
         for node in graph.get_nodes():
