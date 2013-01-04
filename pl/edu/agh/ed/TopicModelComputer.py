@@ -5,16 +5,16 @@ import os
 from gensim.models import ldamodel
 import codecs
 import re
-from Settings import RESOURCES_PATH
+from Settings import RESOURCES_PATH, STOP_LIST_PATH, WORDS_FORMS_PATH, DICTIONARY_PATH, TFIDF_PATH, LDA_PATH
 
 def read_stop():
-    with codecs.open(os.path.join(RESOURCES_PATH, 'stop.txt'), "r") as f:
+    with codecs.open(STOP_LIST_PATH, "r") as f:
         return set([word.strip() for word in f.read().split(',')])
 
 
 def read_dictionary():
     dictionary = {}
-    with codecs.open(os.path.join(RESOURCES_PATH, 'odm.txt'), "r", 'utf-8') as f:
+    with codecs.open(WORDS_FORMS_PATH, "r", 'utf-8') as f:
         data = f.read()
         for line in data.split('\n'):
             words = line.split(',')
@@ -49,13 +49,13 @@ def main():
         for doc in docs:
             documents.append(doc.split())
         dictionary.add_documents(documents)
-        dictionary.save(os.path.join(RESOURCES_PATH, 'dictionary'))
+        dictionary.save(DICTIONARY_PATH)
         tfidf = models.TfidfModel(dictionary=dictionary)
-        tfidf.save(os.path.join(RESOURCES_PATH, 'tfidf'))
+        tfidf.save(TFIDF_PATH)
         texts = [document for document in documents]
         corpus = [dictionary.doc2bow(text) for text in texts]
         model = ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=50, distributed=False)
-        model.save(os.path.join(RESOURCES_PATH, 'lda'))
+        model.save(LDA_PATH)
 
 if __name__ == '__main__':
     main()

@@ -1,7 +1,6 @@
 import codecs
 import re
-import os
-from Settings import RESOURCES_PATH
+from Settings import STOP_LIST_PATH, WORDS_FORMS_PATH
 
 
 class Dictionary(object):
@@ -10,12 +9,12 @@ class Dictionary(object):
         self.dictionary = self.read_dictionary()
 
     def read_stop(self):
-        with codecs.open(os.path.join(RESOURCES_PATH, 'stop.txt'), "r") as f:
+        with codecs.open(STOP_LIST_PATH, "r") as f:
             return set([word.strip() for word in f.read().decode('utf-8').split(',')])
 
     def read_dictionary(self):
         dictionary = {}
-        with codecs.open(os.path.join(RESOURCES_PATH, 'odm.txt'), "r", "utf-8") as f:
+        with codecs.open(WORDS_FORMS_PATH, "r", "utf-8") as f:
             data = f.read()
             for line in data.split('\n'):
                 words = line.split(',')

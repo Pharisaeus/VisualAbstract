@@ -1,16 +1,14 @@
 import networkx as nx
-from Settings import RESOURCES_PATH
+from Settings import DICTIONARY_PATH, LDA_PATH, TFIDF_PATH
 from pl.edu.agh.ed.community import best_partition
 from pl.edu.agh.ed.TopicModel import TopicModel
 from pl.edu.agh.ed.Dictionary import Dictionary
 from pl.edu.agh.ed.Graph import Graph
-import os
 
 
 class TextGraphMaker(object):
     __dictionary = Dictionary()
-    __topicModel = TopicModel(os.path.join(RESOURCES_PATH, 'dictionary'), os.path.join(RESOURCES_PATH, 'lda'),
-        os.path.join(RESOURCES_PATH, 'tfidf'))
+    __topicModel = TopicModel(DICTIONARY_PATH, LDA_PATH, TFIDF_PATH)
 
     def __init__(self):
         self.dictionary = self.__dictionary
