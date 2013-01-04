@@ -1,10 +1,10 @@
 import networkx as nx
+from Settings import RESOURCES_PATH
 from pl.edu.agh.ed.community import best_partition
 from pl.edu.agh.ed.TopicModel import TopicModel
 from pl.edu.agh.ed.Dictionary import Dictionary
 from pl.edu.agh.ed.Graph import Graph
 import os
-from DjangoTest.settings import  RESOURCES_PATH
 
 
 class TextGraphMaker(object):

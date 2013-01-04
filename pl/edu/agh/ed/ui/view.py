@@ -8,11 +8,9 @@ def index():
     colored_topic_keywords = {}
     input_text = "Wpisz przykladowy tekst "
     colored_nodes = None
-    print request
     if 'text' in request.form and 'percentage' in request.form:
         input_text = request.form['text']
         percentage = int(request.form['percentage'])
-        print input_text, percentage
         textGraphMaker = TextGraphMaker()
         graph = textGraphMaker.create_text_graph(input_text, percentage)
         colored_nodes = graph.get_colored_nodes()

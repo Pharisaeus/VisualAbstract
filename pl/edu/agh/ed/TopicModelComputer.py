@@ -5,8 +5,7 @@ import os
 from gensim.models import ldamodel
 import codecs
 import re
-from DjangoTest.settings import RESOURCES_PATH
-
+from Settings import RESOURCES_PATH
 
 def read_stop():
     with codecs.open(os.path.join(RESOURCES_PATH, 'stop.txt'), "r") as f:
@@ -44,7 +43,7 @@ def read_documents(dictionary, stop_list):
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     dictionary = corpora.Dictionary()
-    with codecs.open(os.path.join(RESOURCES_PATH, 'test'), "r", 'utf-8') as f:
+    with codecs.open(os.path.join(RESOURCES_PATH, 'docs'), "r", 'utf-8') as f:
         docs = f.readlines()
         documents = []
         for doc in docs:

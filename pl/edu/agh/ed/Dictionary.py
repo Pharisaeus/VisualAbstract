@@ -1,7 +1,7 @@
 import codecs
 import re
 import os
-from DjangoTest.settings import  RESOURCES_PATH
+from Settings import RESOURCES_PATH
 
 
 class Dictionary(object):
