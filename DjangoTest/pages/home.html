@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Testujemy {% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+$(document).ready(function() {  
+  $("span").tagcloud({ 
+     size: { 
+       start: 10, 
+       end: 40, 
+       unit: 'px' 
+     }, 
+     color: { 
+       start: "#000000", 
+       end: "#000000" 
+     } 
+  });     
+}); 
+</script>
+<div>
+    <form action="." method="post">
+        {% csrf_token %}
+        <textarea name="text" id="text" rows="10" cols="100">{{ text }}</textarea>
+        <br />
+        Poziom szczegółowości grafu (w %)
+        <input type="text" name="percentage" id="percentage" value="20" />
+        <input type="submit" value="Wyślij" />
+    </form>
+    <div class="span12 buttons-container">
+        <button class="btn" id="stop-layout">
+            Stop Layout
+        </button>
+        <button class="btn" id="rescale-graph">
+            Rescale Graph
+        </button>
+    </div>
+    <div class="span12 sigma-parent" id="sigma-example-parent">
+        <div class="sigma-expand" id="sigma-example"></div>
+    </div>
+</div>
+<div>
+        {% for color,key_words_tuples in colored_topic_keywords.items %}
+        <div style="background-color:{{ color }}"> 
+            {% for probability,word in key_words_tuples %}
+                <span rel="{{ probability }}">{{ word }}</span> 
+            {% endfor %}
+        </div>
+        {% endfor %}
+</div>
+
+<script type="text/javascript">
+    function init() {
+        var sigInst = sigma.init(document.getElementById('sigma-example')).drawingProperties({
+    defaultLabelColor: '#fff',
+    defaultLabelSize: 14,
+    defaultLabelBGColor: '#fff',
+    defaultLabelHoverColor: '#000',
+    labelThreshold: 6,
+    defaultEdgeType: 'curve'
+  }).graphProperties({
+    minNodeSize: 1,
+    maxNodeSize: 15,
+    minEdgeSize: 1,
+    maxEdgeSize: 1
+  }).mouseProperties({
+    maxRatio: 20
+  });
+        var i = 0
+        {% for color,nodes in colored_nodes.items %}
+            {% for node in nodes %}
+                sigInst.addNode('{{ node.word }}', {
+                'x' : Math.random(),
+                'y' : Math.random(),
+                'size' : 2*{{ node.get_size }} ,
+                'color' : '{{ color }}',
+                'cluster' : i
+            });
+            i++
+            {% endfor %}
+        {% endfor %}
+        
+            i=0
+        {% for color,nodes in colored_nodes.items %}
+            {% for node in nodes %}
+                {% for neighbour,weight in node.neighbours %}
+                    sigInst.addEdge(i, '{{node.word}}','{{neighbour.word}}');
+                    i+=1
+                {% endfor %}
+            {% endfor %}
+         {% endfor %}
+        
+        sigInst.startForceAtlas2();
+
+      sigInst.bind('overnodes',function(event){
+        var nodes = event.content;
+        var neighbors = {};
+        sigInst.iterEdges(function(e){
+          if(nodes.indexOf(e.source)>=0 || nodes.indexOf(e.target)>=0){
+            neighbors[e.source] = 1;
+            neighbors[e.target] = 1;
+          }
+        }).iterNodes(function(n){
+          if(!neighbors[n.id]){
+            n.hidden = 1;
+          }else{
+            n.hidden = 0;
+          }
+        }).draw(2,2,2);
+      }).bind('outnodes',function(){
+        sigInst.iterEdges(function(e){
+          e.hidden = 0;
+        }).iterNodes(function(n){
+          n.hidden = 0;
+        }).draw(2,2,2);
+      });
+
+        var isRunning = true;
+        document.getElementById('stop-layout').addEventListener('click', function() {
+            if (isRunning) {
+                isRunning = false;
+                sigInst.stopForceAtlas2();
+                document.getElementById('stop-layout').childNodes[0].nodeValue = 'Start Layout';
+            } else {
+                isRunning = true;
+                sigInst.startForceAtlas2();
+                document.getElementById('stop-layout').childNodes[0].nodeValue = 'Stop Layout';
+            }
+        }, true);
+        document.getElementById('rescale-graph').addEventListener('click', function() {
+            sigInst.position(0, 0, 1).draw();
+        }, true);
+    }
+
+    if (document.addEventListener) {
+        document.addEventListener('DOMContentLoaded', init, false);
+    } else {
+        window.onload = init;
+    }
+</script>
+
+<style type="text/css">
+    /* sigma.js context : */
+    .sigma-parent {
+        position: relative;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        background: #222;
+        height: 500px;
+    }
+    .sigma-expand {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+    .buttons-container {
+        padding-bottom: 8px;
+        padding-top: 12px;
+    }
+</style>
+
+{% endblock %}
+
