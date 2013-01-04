@@ -44,15 +44,19 @@ def read_documents(dictionary, stop_list):
 def main():
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     dictionary = corpora.Dictionary()
-    documents = read_documents(read_dictionary(), read_stop())[1:]
-    dictionary.add_documents(documents)
-    dictionary.save(os.path.join(RESOURCES_PATH, 'dictionary'))
-    tfidf = models.TfidfModel(dictionary=dictionary)
-    tfidf.save(os.path.join(RESOURCES_PATH, 'tfidf'))
-    texts = [document for document in documents]
-    corpus = [dictionary.doc2bow(text) for text in texts]
-    model = ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=100)
-    model.save(os.path.join(RESOURCES_PATH, 'lda'))
+    with codecs.open(os.path.join(RESOURCES_PATH, 'test'), "r", 'utf-8') as f:
+        docs = f.readlines()
+        documents = []
+        for doc in docs:
+            documents.append(doc.split())
+        dictionary.add_documents(documents)
+        dictionary.save(os.path.join(RESOURCES_PATH, 'dictionary'))
+        tfidf = models.TfidfModel(dictionary=dictionary)
+        tfidf.save(os.path.join(RESOURCES_PATH, 'tfidf'))
+        texts = [document for document in documents]
+        corpus = [dictionary.doc2bow(text) for text in texts]
+        model = ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=50, distributed=False)
+        model.save(os.path.join(RESOURCES_PATH, 'lda'))
 
 if __name__ == '__main__':
     main()
