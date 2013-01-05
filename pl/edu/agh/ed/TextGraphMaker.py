@@ -1,3 +1,4 @@
+import random
 import networkx as nx
 from Settings import DICTIONARY_PATH, LDA_PATH, TFIDF_PATH
 from pl.edu.agh.ed.community import best_partition
@@ -63,4 +64,10 @@ class TextGraphMaker(object):
         self.topicModel.print_topics(graph)
 
     def get_topics(self, graph):
-        return self.topicModel.get_topcis(graph, 40)
+        sortedTopics = self.topicModel.get_topcis(graph, 40)
+        topics = {}
+        for color, words in sortedTopics.items():
+            randomized = words[:]
+            random.shuffle(randomized)
+            topics[color] = randomized
+        return topics
