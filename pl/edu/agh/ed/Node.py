@@ -4,6 +4,7 @@ class Node(object):
         self.word = word
         self.color = None
         self.incoming = []
+        self.weight = -1
 
     def connect_to(self, node, edge_weight):
         self.neighbours.append((node, edge_weight))
@@ -25,4 +26,9 @@ class Node(object):
         return self.color
 
     def get_size(self):
+        if(self.weight!=-1):
+            return self.weight
         return len(self.neighbours) + len(self.incoming)
+
+    def set_weight(self, new_weight):
+        self.weight=new_weight

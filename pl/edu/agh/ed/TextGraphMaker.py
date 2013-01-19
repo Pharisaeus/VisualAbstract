@@ -15,7 +15,7 @@ class TextGraphMaker(object):
         self.dictionary = self.__dictionary
         self.topicModel = self.__topicModel
 
-    def create_text_graph(self, text, percentage):
+    def create_text_graph(self, text, percentage, betweenness = True):
         words_list = self.dictionary.normalize_document(text)
         keywords = self.topicModel.return_top_words(words_list, percentage)
         graph = Graph()
@@ -29,10 +29,10 @@ class TextGraphMaker(object):
                         node.connect_to(next_node, weight)
                         weight -= 1
         graph.remove_single_vertices()
-        self.color_graph(graph)
+        self.color_graph(graph,betweenness)
         return graph
 
-    def color_graph(self, graph):
+    def color_graph(self, graph,betweenness):
         G = nx.Graph()
         for node in graph.get_nodes():
             G.add_node(node.get_word())
@@ -43,6 +43,10 @@ class TextGraphMaker(object):
         communities = self.merge_converging_communities(groups)
         for node in graph.get_nodes():
             node.set_color(communities[node.get_word()])
+        if betweenness:
+            betweenness_dictionary = nx.betweenness_centrality(G)
+            for node in graph.get_nodes():
+                node.set_weight(betweenness_dictionary[node.get_word()])
 
     def merge_converging_communities(self, groups):
         communities = {}
