@@ -4,7 +4,8 @@ from pl.edu.agh.ed.Node import Node
 class Graph(object):
     def __init__(self):
         self.nodes = {}
-        self.known_colors = ['red', 'greenyellow', 'green', 'blue', 'orange', 'yellow', 'fuchsia', 'olive', 'purple', 'white', 'skyblue', 'khaki']
+        self.known_colors = ['red', '#adff2f', 'green', 'blue', 'orange', 'yellow', 'fuchsia', 'olive', 'purple', 'white', '#87ceeb', '#f0e68c', '#ff8c00', '#228b22', '#ff4500'
+        '#4169e1', 'aqua', '#7fff00', '#ff7f50', '#8fbc8f', '#ff6347', 'lime']
 
     def get_node(self, label):
         if not self.nodes.has_key(label):

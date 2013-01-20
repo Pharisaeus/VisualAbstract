@@ -38,7 +38,8 @@ class TopicModel(object):
         topic_keywords = {}
         for color, nodes_list in graph.get_colored_nodes().iteritems():
             words = [node.get_word() for node in nodes_list]
-            topic_keywords[color] = self.get_best_infered_topic(color, words, words_count)
+            inferred_topics = [(p, w.decode('utf-8')) for (p, w) in self.get_best_infered_topic(color, words, words_count)]
+            topic_keywords[color] = inferred_topics
         return topic_keywords
 
     def get_best_infered_topic(self, color, words, words_count):

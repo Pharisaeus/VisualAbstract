@@ -24,11 +24,18 @@ class Dictionary(object):
 
     def normalize_document(self, document):
         normalized_document = []
-        for word in re.findall('\w+', document.lower(), re.UNICODE):
-            if word not in self.stoplist and word != '':
+        for word in re.findall('\w{3,}', document.lower(), re.UNICODE):
+            if word not in self.stoplist and word != '' and not is_number(word):
                 try:
                     normalized_document.append(self.dictionary[word])
                 except KeyError:
                     normalized_document.append(word)
                     self.dictionary[word] = word
         return normalized_document
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False

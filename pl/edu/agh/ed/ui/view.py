@@ -10,12 +10,13 @@ def index():
     colored_nodes = None
     errors = None
     input_text = ""
-    if 'text' in request.form and 'percentage' in request.form:
+    if 'text' in request.form and 'percentage' in request.form and 'centrality' in request.form:
         try:
             input_text = request.form['text']
-            percentage = int(request.form['percentage'])
+            percentage = float(request.form['percentage'])
+            betweenneess = request.form['centrality'] == "betweenness"
             textGraphMaker = TextGraphMaker()
-            graph = textGraphMaker.create_text_graph(input_text, percentage)
+            graph = textGraphMaker.create_text_graph(input_text, percentage, betweenness=betweenneess)
             colored_nodes = graph.get_colored_nodes()
             colored_topic_keywords = textGraphMaker.get_topics(graph) # color -> (probability,word)
         except KeyError:
@@ -26,6 +27,3 @@ def index():
         colored_topic_keywords=colored_topic_keywords,
         errors=errors
     )
-
-
-

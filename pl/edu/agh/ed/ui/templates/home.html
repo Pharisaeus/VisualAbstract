@@ -26,8 +26,9 @@
 </script>
 <div id="container">
     <div class="tabs">
-        <div class="tab">
-            <input type="radio" id="tab-1" name="tab-group-1" {% if not colored_topic_keywords %} checked {% endif %}>
+        <div class="tab" id="formTab">
+            <input type="radio" id="tab-1" class="tabHeader" name="tab-group-1" {% if not colored_topic_keywords %}
+                   checked {% endif %}>
             <label class="tabLabel" for="tab-1">Tekst</label>
 
             <div class="content">
@@ -40,18 +41,28 @@
                     <textarea name="text" id="text" placeholder="Wprowadź przykładowy tekst">{{ text }}</textarea>
                     <label for="percentage">Poziom szczegółowości grafu (w %) </label>
                     <input size="4" type="text" name="percentage" id="percentage" value="20"/>
+                    <fieldset>
+                        <legend>Miara centralności węzłów</legend>
+                        <label>
+                            <input type="radio" name="centrality" value="betweenness">Betweenness
+                        </label>
+                        <label>
+                            <input type="radio" name="centrality" value="degree" checked="checked">Stopień wierzchołka
+                        </label>
+                    </fieldset>
                     <input class="btn" type="submit" value="Stwórz wizualizację"/>
                 </form>
             </div>
         </div>
         <div class="tab">
-            <input type="radio" id="tab-2" name="tab-group-1" {% if colored_topic_keywords %} checked {% endif %}>
+            <input type="radio" id="tab-2" class="tabHeader" name="tab-group-1" {% if colored_topic_keywords %}
+                   checked {% endif %}>
             <label class="tabLabel" for="tab-2">Tag cloud</label>
 
             <div class="content" id="tagClouds">
                 {% for color,key_words_tuples in colored_topic_keywords.items() %}
                     <div class="tagCloud">
-                        <div class="tagColor" style="background-color:{{ color }}">
+                        <div class="tagColor" data-color="{{ color }}" style="background-color:{{ color }}">
                         </div>
                         <div class="tags">
                             {% for probability,word in key_words_tuples %}
@@ -158,6 +169,17 @@
             document.getElementById('rescale-graph').addEventListener('click', function () {
                 sigInst.position(0, 0, 1).draw();
             }, true);
+
+            $(".tagCloud").click(function (event) {
+                var disabled = $(this).hasClass("tagCloudDisabled");
+                var tagColor = $(this).children(".tagColor").data("color");
+                sigInst.iterNodes(function (node) {
+                    if (node.color == tagColor) {
+                        node.hidden = !disabled;
+                    }
+                }).draw(2, 2, 2);
+                $(this).toggleClass("tagCloudDisabled");
+            })
         }
 
         if (document.addEventListener) {
